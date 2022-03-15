@@ -1,21 +1,21 @@
 /**
  * Create the promise returning `Async` suffixed versions of the functions below,
  * Promisify them if you can, otherwise roll your own promise returning function
- */ 
+ */
 
-var fs = require('fs');
-var request = require('needle');
-var crypto = require('crypto');
-var Promise = require('bluebird');
+const fs = require('fs');
+const request = require('needle');
+const crypto = require('crypto');
+const Promise = require('bluebird');
 
 // (1) Asyncronous HTTP request
-var getGitHubProfile = function (user, callback) {
-  var url = 'https://api.github.com/users/' + user;
-  var options = {
+const getGitHubProfile = function(user, callback) {
+  const url = 'https://api.github.com/users/' + user;
+  const options = {
     headers: { 'User-Agent': 'request' },
   };
 
-  request.get(url, options, function (err, res, body) {
+  request.get(url, options, function(err, res, body) {
     if (err) {
       callback(err, null);
     } else if (body.message) {
@@ -29,8 +29,7 @@ var getGitHubProfile = function (user, callback) {
   });
 };
 
-var getGitHubProfileAsync; // TODO
-
+const getGitHubProfileAsync = Promise.promisify(getGitHubProfile);
 
 // (2) Asyncronous token generation
 var generateRandomToken = function(callback) {
@@ -40,25 +39,22 @@ var generateRandomToken = function(callback) {
   });
 };
 
-var generateRandomTokenAsync; // TODO
-
+const generateRandomTokenAsync = Promise.promisify(generateRandomToken);
 
 // (3) Asyncronous file manipulation
-var readFileAndMakeItFunny = function(filePath, callback) {
+const readFileAndMakeItFunny = function(filePath, callback) {
   fs.readFile(filePath, 'utf8', function(err, file) {
     if (err) { return callback(err); }
-   
-    var funnyFile = file.split('\n')
-      .map(function(line) {
-        return line + ' lol';
-      })
+
+    const funnyFile = file.split('\n')
+      .map(line => line + ' lol')
       .join('\n');
 
-    callback(funnyFile);
+    callback(null, funnyFile);
   });
 };
 
-var readFileAndMakeItFunnyAsync; // TODO
+const readFileAndMakeItFunnyAsync = Promise.promisify(readFileAndMakeItFunny);
 
 // Export these functions so we can test them and reuse them in later exercises
 module.exports = {
